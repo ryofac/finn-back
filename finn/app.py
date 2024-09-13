@@ -1,6 +1,6 @@
 from fastapi import FastAPI, status
 
-from finn.schemas import Message
+from finn.schemas.base_schema import Message
 
 app = FastAPI()
 
@@ -12,4 +12,3 @@ app = FastAPI()
 )
 def hello():
     return {"message": "hello world!"}
-    

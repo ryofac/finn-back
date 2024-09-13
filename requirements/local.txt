@@ -1,13 +1,12 @@
 # linters
-ruff
+ruff==0.6.5 
 
 # Tasks
-taskipy
+taskipy==1.13.0 
 
 # Test
-pytest
-coverage
-pytest-cov
-
+pytest==8.3.3
+coverage==7.6.1 
+pytest-cov==5.0.0 
 # Debugging
-ipython
+ipython==8.27.0 

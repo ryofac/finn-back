@@ -3,7 +3,7 @@ from fastapi import status
 from fastapi.testclient import TestClient
 
 from finn.app import app
-from finn.schemas import Message
+from finn.schemas.base_schema import Message
 
 HELLO_URL = "/hello"
 
