@@ -1,0 +1,6 @@
+fastapi[standard]
+fastapi-cli
+uvicorn
+pydantic
+pydantic_settings
+httpx

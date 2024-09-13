@@ -1,0 +1,13 @@
+# linters
+ruff
+
+# Tasks
+taskipy
+
+# Test
+pytest
+coverage
+pytest-cov
+
+# Debugging
+ipython
