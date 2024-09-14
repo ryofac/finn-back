@@ -18,3 +18,7 @@ def test_hello(client: TestClient):
     message_schema = Message.model_validate({"message": "hello world!"}).model_dump()
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == message_schema
+
+
+def test_get(client: TestClient):
+    reponse = client.get("/users/")

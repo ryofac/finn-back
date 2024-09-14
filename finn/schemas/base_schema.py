@@ -1,11 +1,20 @@
+from dataclasses import dataclass
 from datetime import datetime
+from decimal import Decimal
+from typing import List
 
 from pydantic import BaseModel, ConfigDict
 
+from finn.models import Debit
+
 
 class Message(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
     message: str
+
+
+class DebitSchema(BaseModel):
+    id: int
+    value: Decimal
 
 
 class UserBase(BaseModel):
@@ -15,6 +24,7 @@ class UserBase(BaseModel):
     username: str
     full_name: str
     password: str
+    debits: List[DebitSchema]
     created_at: datetime
     updated_at: datetime
 
@@ -27,8 +37,15 @@ class UserPublic(BaseModel):
     id: int
     username: str
     full_name: str
+    email: str
+    debits: List[DebitSchema]
     created_at: datetime
     updated_at: datetime
+
+
+class UserList(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    users: list[UserPublic]
 
 
 class UserCreate(BaseModel):
@@ -47,6 +64,5 @@ class UserUpdate(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-    username: str
     full_name: str
     password: str
