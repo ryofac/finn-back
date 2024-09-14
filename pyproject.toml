@@ -25,8 +25,14 @@ lint = 'ruff check . && ruff check . --diff'
 format = 'ruff check . --fix && ruff format .'
 run = 'fastapi dev finn/app.py'
 pre_test = 'task lint'
-test = 'pytest -s -x --cov=finn -vv'
+test = 'docker compose -f local.yml run --rm web pytest -s -x --cov=finn -vv'
 post_test = 'coverage html'
+
+up = "docker compose -f local.yml up"
+down = "docker compose -f local.yml down"
+
+makemigration = "docker compose -f local.yml run --rm web alembic revision --autogenerate -m"
+migrate = "docker compose -f local.yml run --rm web alembic upgrade head"
 
 [tool.pytest.ini_options]
 pythonpath = "."
