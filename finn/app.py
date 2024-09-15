@@ -1,4 +1,5 @@
 from fastapi import FastAPI, status
+from fastapi.middleware.cors import CORSMiddleware
 
 from finn.routes.user import router as user_router
 from finn.schemas.base_schema import Message
@@ -6,6 +7,12 @@ from finn.schemas.base_schema import Message
 app = FastAPI()
 
 app.include_router(user_router)
+app.add_middleware(
+    CORSMiddleware,
+    allowed_origins=["*"],
+    allowed_methods=["*"],
+    allow_credentials=True,
+)
 
 
 @app.get(
