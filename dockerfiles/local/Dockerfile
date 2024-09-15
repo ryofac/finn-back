@@ -12,7 +12,6 @@ RUN pip install --no-cache-dir --upgrade -r /app/requirements/base.txt && \
 COPY . /app
 
 RUN chmod +x /app/finn
+RUN chmod +x /app/entrypoint.sh
 
 EXPOSE 8000
-
-CMD ["fastapi", "dev", "finn/main.py", "--port", "8000", "--host", "0.0.0.0"]

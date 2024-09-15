@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/local/Dockerfile
+    entrypoint: /app/entrypoint.sh
     container_name: finn_app
     ports:
       - "8000:8000"
