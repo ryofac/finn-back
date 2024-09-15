@@ -11,4 +11,4 @@ RUN pip install --no-cache-dir --upgrade -r /app/requirements/base.txt
 COPY . /app
 
 
-CMD ["fastapi", "run", "finn/app.py", "--port", "8000", "--host", "0.0.0.0"]
+CMD ["fastapi", "run", "finn/main.py", "--port", "8000", "--host", "0.0.0.0"]

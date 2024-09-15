@@ -1,12 +1,15 @@
+-r base.txt
+
 # linters
-ruff==0.6.5 
+ruff==0.6.5
+pre-commit==3.8.0
 
 # Tasks
-taskipy==1.13.0 
+taskipy==1.13.0
 
 # Test
 pytest==8.3.3
-coverage==7.6.1 
-pytest-cov==5.0.0 
+coverage==7.6.1
+pytest-cov==5.0.0
 # Debugging
-ipython==8.27.0 
+ipython==8.27.0

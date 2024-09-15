@@ -15,4 +15,4 @@ RUN chmod +x /app/finn
 
 EXPOSE 8000
 
-CMD ["fastapi", "dev", "finn/app.py", "--port", "8000", "--host", "0.0.0.0", "--root-path", "/api/v1"]
+CMD ["fastapi", "dev", "finn/main.py", "--port", "8000", "--host", "0.0.0.0"]
