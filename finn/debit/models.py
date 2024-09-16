@@ -6,13 +6,14 @@ from sqlalchemy import ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from finn.categories.models import Category
-from finn.core.models import Base
+from finn.database import BaseModelMixin, table_registry
 
 if TYPE_CHECKING:
     from finn.users.models import User
 
 
-class Debit(Base):
+@table_registry.mapped_as_dataclass
+class Debit(BaseModelMixin):
     __tablename__ = "debits"
 
     value: Mapped[Decimal]

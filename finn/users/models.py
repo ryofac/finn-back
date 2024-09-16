@@ -2,13 +2,15 @@ from typing import TYPE_CHECKING, List
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from finn.core.models import Base, DatedModelMixin
+from finn.core.models import DatedModelMixin
+from finn.database import BaseModelMixin, table_registry
 
 if TYPE_CHECKING:
     from finn.debit.models import Debit
 
 
-class User(Base, DatedModelMixin):
+@table_registry.mapped_as_dataclass
+class User(BaseModelMixin, DatedModelMixin):
     __tablename__ = "users"
 
     username: Mapped[str] = mapped_column(unique=True)

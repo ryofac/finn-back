@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, List
+from typing import List
 
 from finn.core.schemas import OrmModel
 from finn.debit.schemas import DebitSchema

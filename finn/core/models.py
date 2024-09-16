@@ -1,11 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import func
-from sqlalchemy.orm import DeclarativeBase, Mapped, MappedAsDataclass, mapped_column
-
-
-class Base(MappedAsDataclass, DeclarativeBase):
-    id: Mapped[int] = mapped_column(init=False, primary_key=True)
+from sqlalchemy.orm import Mapped, mapped_column
 
 
 class DatedModelMixin:

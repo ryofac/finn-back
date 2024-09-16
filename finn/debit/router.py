@@ -3,10 +3,11 @@ from fastapi.responses import Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from finn.categories.models import Category
 from finn.database import get_session
 from finn.debit.models import Debit
 from finn.debit.schemas import DebitCreateOrUpdateSchema, DebitList, DebitSchema
-from finn.models import Category, User
+from finn.users.models import User
 
 debit_router = APIRouter(prefix="/debits", tags=["debits"])
 
@@ -76,7 +77,11 @@ async def get_debit_by_id(debit_id: int, session: AsyncSession = Depends(get_ses
         status.HTTP_404_NOT_FOUND: {"description": "Debit not found!"},
     },
 )
-async def update_debit(debit_id: int, debit_update: DebitCreateOrUpdateSchema, session: AsyncSession = Depends(get_session)):
+async def update_debit(
+    debit_id: int,
+    debit_update: DebitCreateOrUpdateSchema,
+    session: AsyncSession = Depends(get_session),
+):
     exist_debit: Debit = await session.scalar(select(Debit).where(debit_id == Debit.id))
 
     if not exist_debit:
