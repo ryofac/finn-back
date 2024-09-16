@@ -5,7 +5,10 @@ from finn.categories.router import category_router
 from finn.debit.router import debit_router
 from finn.users.router import user_router
 
-app = FastAPI()
+app = FastAPI(
+    title="Finn Back",
+    description="Backend da sua aplicação de finanças",
+)
 
 app.include_router(user_router)
 app.add_middleware(
@@ -15,7 +18,6 @@ app.add_middleware(
     allow_headers=["*"],
     allow_credentials=True,
 )
-
 
 app.include_router(user_router)
 app.include_router(debit_router)
