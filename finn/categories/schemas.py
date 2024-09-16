@@ -4,6 +4,7 @@ from finn.core.schemas import OrmModel
 class CategorySchema(OrmModel):
     id: int
     name: str
+    description: str
 
 
 class CategoryCreateOrUpdateSchema(OrmModel):

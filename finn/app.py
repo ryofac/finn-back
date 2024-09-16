@@ -1,8 +1,8 @@
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 
+from finn.core.schemas import Message
 from finn.routes.user import router as user_router
-from finn.schemas.base_schema import Message
 
 app = FastAPI()
 
