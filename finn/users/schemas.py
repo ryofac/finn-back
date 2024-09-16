@@ -1,5 +1,6 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, List
+
+from pydantic import BaseModel
 
 from finn.core.schemas import OrmModel
 from finn.debit.schemas import DebitSchema
@@ -10,7 +11,7 @@ class UserBase(OrmModel):
     username: str
     full_name: str
     password: str
-    debits: List[DebitSchema]
+    debits: list[DebitSchema]
     created_at: datetime
     updated_at: datetime
 
@@ -22,7 +23,7 @@ class UserPublic(OrmModel):
     username: str
     full_name: str
     email: str
-    debits: List[DebitSchema]
+    debits: list[DebitSchema]
     created_at: datetime
     updated_at: datetime
 
@@ -45,3 +46,12 @@ class UserUpdate(OrmModel):
 
     full_name: str
     password: str
+
+
+class UserFilterSchema(BaseModel):
+    dt_created_from: datetime | None
+    dt_created_to: datetime | None
+    name: str | None
+    name_i: str | None
+    username: str | None
+    username_i: str | None

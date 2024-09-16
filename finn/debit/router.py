@@ -1,11 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from datetime import datetime
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from finn.database import get_session
+from finn.debit.filters import filter_debit
 from finn.debit.models import Debit
-from finn.debit.schemas import DebitCreateOrUpdateSchema, DebitList, DebitSchema
+from finn.debit.schemas import DebitCreateOrUpdateSchema, DebitFilterSchema, DebitList, DebitSchema
 from finn.models import Category, User
 
 debit_router = APIRouter(prefix="/debits", tags=["debits"])
@@ -44,8 +47,26 @@ async def create_debit(debit: DebitCreateOrUpdateSchema, session: AsyncSession =
     "/",
     response_model=DebitList,
 )
-async def get_debits(limit: int = 100, offset: int = 0, session: AsyncSession = Depends(get_session)):
-    result = await session.scalars(select(Debit).offset(offset).limit(limit))
+async def get_debits(
+    dt_payment_from: datetime | None = Query(None, description="Data de pagamento de"),
+    dt_payment_to: datetime | None = Query(None, description="Data de pagamento limite"),
+    owner_id: int | None = Query(None, description="Id do Usuário da task"),
+    category_id: int | None = Query(None, description="Id da categoria"),
+    category_name: str | None = Query(None, description="Nome da categoria"),
+    limit: int = 100,
+    offset: int = 0,
+    session: AsyncSession = Depends(get_session),
+):
+    query = filter_debit(
+        DebitFilterSchema(
+            dt_payment_from=dt_payment_from,
+            dt_payment_to=dt_payment_to,
+            owner_id=owner_id,
+            category_id=category_id,
+            category_name=category_name,
+        )
+    )
+    result = await session.scalars(query.offset(offset).limit(limit))
     debits = result.all()
     return {"debits": debits}
 

@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from datetime import datetime
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from finn.database import get_session
+from finn.users.filters import UserFilterSchema, filter_user
 from finn.users.models import User
 from finn.users.schemas import UserCreate, UserList, UserPublic, UserUpdate
 
@@ -45,10 +48,30 @@ async def create_user(user: UserCreate, session: AsyncSession = Depends(get_sess
     "/",
     response_model=UserList,
 )
-async def get_users(limit: int = 100, offset: int = 0, session: AsyncSession = Depends(get_session)):
-    result = await session.scalars(select(User).offset(offset).limit(limit))
-    all_users = result.all()
-    all_users = UserList.model_validate({"users": all_users})
+async def get_users(
+    dt_created_from: datetime | None = Query(None, description="Data de criação a partir de"),
+    dt_created_to: datetime | None = Query(None, description="Data de criação limite"),
+    name: str | None = Query(None, description="Busca por nome exato"),
+    name_i: str | None = Query(None, description="Busca por nome parecido"),
+    username: str | None = Query(None, description="Busca por username exato"),
+    username_i: str | None = Query(None, description="Busca por username parecido"),
+    limit: int = 100,
+    offset: int = 0,
+    session: AsyncSession = Depends(get_session),
+):
+    query = filter_user(
+        UserFilterSchema(
+            dt_created_from=dt_created_from,
+            dt_created_to=dt_created_to,
+            name_i=name_i,
+            name=name,
+            username=username,
+            username_i=username_i,
+        )
+    )
+    result = await session.scalars(query.limit(limit).offset(offset))
+
+    all_users = UserList.model_validate({"users": result})
 
     return all_users
 

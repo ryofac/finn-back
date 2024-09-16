@@ -1,4 +1,4 @@
-exclude: "^docs/|/alembic/|devcontainer.json"
+exclude: ^(docs/|alembic/|devcontainer\.json)
 default_stages: [commit]
 
 default_language_version:

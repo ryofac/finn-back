@@ -12,6 +12,8 @@ RUN pip install --no-cache-dir --upgrade -r /app/requirements/base.txt && \
 COPY . /app
 
 RUN chmod +x /app/finn
-RUN chmod +x /app/entrypoint.sh
+RUN chmod +x /app/run.sh
 
 EXPOSE 8000
+
+CMD ["./run.sh"]
