@@ -16,6 +16,9 @@ def filter_debit(parameters: DebitFilterSchema):
     if parameters.category_id:
         query = query.filter(Debit.category_id == parameters.category_id)
 
+    if parameters.owner_id:
+        query = query.filter(Debit.owner_id == parameters.owner_id)
+
     if parameters.category_name:
         query = query.join(Category, Category.id == Debit.category_id).filter(Category.name.icontains(parameters.category_name))
 
