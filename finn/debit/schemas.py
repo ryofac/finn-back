@@ -10,7 +10,7 @@ class DebitSchema(OrmModel):
     id: int
     value: float
     owner_id: int
-    category: CategorySchema
+    category: CategorySchema | None
     dt_payment: datetime
 
 
