@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 
 from finn.categories.router import category_router
 from finn.debit.router import debit_router
@@ -21,3 +22,8 @@ app.add_middleware(
 app.include_router(user_router)
 app.include_router(debit_router)
 app.include_router(category_router)
+
+
+@app.get("/")
+def root():
+    return RedirectResponse(url="/docs")
