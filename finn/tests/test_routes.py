@@ -1,24 +1,44 @@
 import pytest
-from fastapi import status
-from fastapi.testclient import TestClient
+from sqlalchemy import StaticPool
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
 
-from finn.app import app
-from finn.schemas.base_schema import Message
+from finn.models import Base, User
 
-HELLO_URL = "/hello"
+CREATE_LIST_USERS_URL = "/users/"
 
 
 @pytest.fixture
-def client():
-    return TestClient(app)
+@pytest.mark.asyncio
+async def session():
+    engine = create_async_engine(
+        "sqlite+aiosqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+
+    Base.metadata.create_all(engine)
+
+    async_session = sessionmaker(
+        engine,
+        class_=AsyncSession,
+        expire_on_commit=False,
+    )
+
+    async with async_session() as async_session:
+        yield async_session
+
+    Base.metadata.drop_all(engine)
 
 
-def test_hello(client: TestClient):
-    response = client.get(url=HELLO_URL)
-    message_schema = Message.model_validate({"message": "hello world!"}).model_dump()
-    assert response.status_code == status.HTTP_200_OK
-    assert response.json() == message_schema
-
-
-def test_get(client: TestClient):
-    reponse = client.get("/users/")
+@pytest.mark.asyncio
+async def test_get_users(session: AsyncSession):
+    created_user = User(
+        username="roberto_carlos",
+        email="roberto@carlos.com",
+        full_name="Roberto Carlos",
+        password="123321",
+    )
+    await session.add(created_user)
+    await session.commit()
+    session.refresh(created_user)

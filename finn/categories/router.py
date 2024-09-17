@@ -60,7 +60,7 @@ async def get_category_by_id(category_id: int, session: AsyncSession = Depends(g
         status.HTTP_404_NOT_FOUND: {"description": "Category not found!"},
     },
 )
-async def update_debit(category_id: int, category_update: CategoryCreateOrUpdateSchema, session: AsyncSession = Depends(get_session)):
+async def update_category(category_id: int, category_update: CategoryCreateOrUpdateSchema, session: AsyncSession = Depends(get_session)):
     exist_category: Category = await session.scalar(select(Category).where(category_id == Category.id))
 
     if not exist_category:
@@ -69,7 +69,8 @@ async def update_debit(category_id: int, category_update: CategoryCreateOrUpdate
             detail="Catgory not found!",
         )
 
-    exist_category.name = category_update.value
+    exist_category.name = category_update.name
+    exist_category.description = category_update.description
 
     await session.commit()
     await session.refresh(exist_category)
