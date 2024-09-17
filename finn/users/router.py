@@ -22,7 +22,7 @@ user_router = APIRouter(prefix="/users", tags=["users"])
     },
 )
 async def create_user(user: UserCreate, session: AsyncSession = Depends(get_session)):
-    db_user: User = User(**user.model_dump())
+    db_user: User = User(**user.model_dump(exclude="password"))
 
     existent_user = await session.scalar(select(User).where((User.username == user.username) | (User.email == user.email)))
 

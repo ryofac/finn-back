@@ -1,5 +1,4 @@
 from datetime import datetime
-from decimal import Decimal
 
 from pydantic import BaseModel
 
@@ -16,7 +15,7 @@ class DebitSchema(OrmModel):
 
 
 class DebitCreateOrUpdateSchema(OrmModel):
-    value: Decimal
+    value: float
     category_id: int
     owner_id: int
 
