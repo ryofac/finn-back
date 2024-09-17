@@ -72,7 +72,7 @@ async def get_users(
     )
     result = await session.scalars(query.limit(limit).offset(offset))
 
-    all_users = UserList.model_validate({"users": result})
+    all_users = UserList.model_validate({"users": result.all()})
 
     return all_users
 
