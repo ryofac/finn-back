@@ -23,6 +23,12 @@ debit_router = APIRouter(prefix="/debits", tags=["debits"])
 async def create_debit(debit: DebitCreateOrUpdateSchema, session: AsyncSession = Depends(get_session)):
     db_debit: Debit = Debit(**debit.model_dump())
 
+    if not debit.owner_id or not debit.category_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Debit must have user and category",
+        )
+
     owner: User = await session.scalar(select(User).where(User.id == db_debit.owner_id))
     category: Category = await session.scalar(select(Category).where(Category.id == db_debit.category_id))
 
