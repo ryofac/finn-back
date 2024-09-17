@@ -1,7 +1,8 @@
 from sqlalchemy import select
 
+from finn.categories.models import Category
+from finn.debit.models import Debit
 from finn.debit.schemas import DebitFilterSchema
-from finn.models import Category, Debit
 
 
 def filter_debit(parameters: DebitFilterSchema):

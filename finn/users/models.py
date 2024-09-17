@@ -33,4 +33,4 @@ class User(Base, DatedModelMixin):
         self._password = security.get_password_hash(new_password)
 
     def verify_password(self, plain_password: str):
-        return security.verify_password(plain_password)
+        return security.verify_password(plain_password, self._password)

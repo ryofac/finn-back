@@ -1,6 +1,6 @@
 from sqlalchemy import select
 
-from finn.models import User
+from finn.users.models import User
 from finn.users.schemas import UserFilterSchema
 
 

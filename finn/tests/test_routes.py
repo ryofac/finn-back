@@ -3,7 +3,7 @@ from sqlalchemy import StaticPool
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from finn.models import Base, User
+from finn.users.models import Base, User
 
 CREATE_LIST_USERS_URL = "/users/"
 

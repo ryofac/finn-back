@@ -5,11 +5,12 @@ from fastapi.responses import Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from finn.categories.models import Category
 from finn.database import get_session
 from finn.debit.filters import filter_debit
 from finn.debit.models import Debit
 from finn.debit.schemas import DebitCreateOrUpdateSchema, DebitFilterSchema, DebitList, DebitSchema
-from finn.models import Category, User
+from finn.users.models import User
 
 debit_router = APIRouter(prefix="/debits", tags=["debits"])
 
