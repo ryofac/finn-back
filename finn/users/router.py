@@ -38,6 +38,7 @@ async def create_user(user: UserCreate, session: AsyncSession = Depends(get_sess
                 detail="User with the same email exists",
             )
 
+    db_user.password = user.password
     session.add(db_user)
     await session.commit()
     await session.refresh(db_user)
