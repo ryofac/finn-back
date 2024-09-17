@@ -23,6 +23,6 @@ def filter_user(filter_parameters: UserFilterSchema):
         final_query = final_query.filter(User.username == filter_parameters.username)
 
     if filter_parameters.username_i:
-        final_query = final_query.filter(User.username.icontains(filter_parameters.username))
+        final_query = final_query.filter(User.username.icontains(filter_parameters.username_i))
 
     return final_query
