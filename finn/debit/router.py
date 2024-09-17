@@ -106,8 +106,17 @@ async def update_debit(debit_id: int, debit_update: DebitCreateOrUpdateSchema, s
             detail="Debit not found!",
         )
 
+    category = await session.scalar(select(Category).where(Category.id == debit_update.category_id))
+    if not category:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "This category does not exists!")
+    exist_debit.category_id = category.id
+
+    owner = await session.scalar(select(User).where(User.id == debit_update.owner_id))
+    if not owner:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "This user does not exists!")
+    exist_debit.owner_id = owner.id
+
     exist_debit.value = debit_update.value
-    exist_debit.category_id = debit_update.category_id
 
     await session.commit()
     await session.refresh(exist_debit)

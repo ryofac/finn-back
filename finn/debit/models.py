@@ -18,8 +18,8 @@ class Debit(Base):
     value: Mapped[Decimal]
     dt_payment: Mapped[datetime] = mapped_column(init=False, default=func.now())
 
-    category_id: Mapped[Optional[int]] = mapped_column(ForeignKey("categories.id"), nullable=True)
-    owner_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"), nullable=True)
+    category_id: Mapped[Optional[int]] = mapped_column(ForeignKey("categories.id"))
+    owner_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"))
 
     owner: Mapped["User"] = relationship(
         "User",
