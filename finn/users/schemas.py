@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from fastapi import Form
 from pydantic import BaseModel
 
 from finn.core.schemas import OrmModel
@@ -24,6 +25,7 @@ class UserPublic(OrmModel):
     full_name: str
     email: str
     debits: list[DebitSchema]
+    profile_photo_url: str | None
     created_at: datetime
     updated_at: datetime
 
@@ -39,6 +41,21 @@ class UserCreate(OrmModel):
     email: str
     full_name: str
     password: str
+
+    @classmethod
+    def as_form(
+        cls,
+        username: str = Form(...),
+        email: str = Form(...),
+        full_name: str = Form(...),
+        password: str = Form(...),
+    ) -> "UserCreate":
+        return cls(
+            username=username,
+            email=email,
+            full_name=full_name,
+            password=password,
+        )
 
 
 class UserUpdate(OrmModel):

@@ -5,7 +5,10 @@ from fastapi.responses import RedirectResponse
 from finn.auth.router import auth_router
 from finn.categories.router import category_router
 from finn.debit.router import debit_router
+from finn.settings import Settings
 from finn.users.router import user_router
+
+settings = Settings()
 
 app = FastAPI(
     title="Finn APP",

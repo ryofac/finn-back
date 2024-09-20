@@ -1,3 +1,6 @@
+from os import getcwd
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,6 +14,8 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     POSTGRES_HOST: str
     POSTGRES_PORT: int
+    BASE_DIR: Path = Path(getcwd())
+    IMAGE_DIR: Path = BASE_DIR / "img"
 
     @property
     def database_url(self):

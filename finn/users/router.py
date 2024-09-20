@@ -1,14 +1,18 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from fastapi.responses import Response
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
+from fastapi.responses import FileResponse, Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from finn.core.utils import save_file
 from finn.database import get_session
+from finn.settings import Settings
 from finn.users.filters import UserFilterSchema, filter_user
 from finn.users.models import User
 from finn.users.schemas import UserCreate, UserList, UserPublic, UserUpdate
+
+settings = Settings()
 
 user_router = APIRouter(prefix="/users", tags=["users"])
 
@@ -21,8 +25,12 @@ user_router = APIRouter(prefix="/users", tags=["users"])
         status.HTTP_400_BAD_REQUEST: {"description": "User with the same user exists."},
     },
 )
-async def create_user(user: UserCreate, session: AsyncSession = Depends(get_session)):
-    db_user: User = User(**user.model_dump(exclude="password"))
+async def create_user(
+    user_profile_photo: UploadFile | None = File(None, media_type="image/png", description="Imagem do usuário"),
+    session: AsyncSession = Depends(get_session),
+    user: UserCreate = Depends(UserCreate.as_form),
+):
+    db_user: User = User(**user.model_dump(exclude=["password", "profile_photo_url"]))
 
     existent_user = await session.scalar(select(User).where((User.username == user.username) | (User.email == user.email)))
 
@@ -42,6 +50,14 @@ async def create_user(user: UserCreate, session: AsyncSession = Depends(get_sess
     session.add(db_user)
     await session.commit()
     await session.refresh(db_user)
+
+    if user_profile_photo is not None:
+        filename = f"{db_user.id}_{user_profile_photo.filename}"
+        photo_path = settings.IMAGE_DIR / filename
+        await save_file(user_profile_photo, photo_path)
+        db_user.profile_photo_url = str(photo_path)
+        await session.commit()
+
     return db_user
 
 
@@ -141,3 +157,30 @@ async def delete_user(user_id: int, session: AsyncSession = Depends(get_session)
     await session.commit()
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@user_router.get(
+    "/profile_photo/{user_id}",
+    status_code=status.HTTP_200_OK,
+    response_class=File(..., media_type="image/png"),
+)
+async def get_user_profile_photo(user_id: int, session: AsyncSession = Depends(get_session)):
+    db_user = await session.scalar(select(User).where(User.id == user_id))
+
+    if not db_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found!",
+        )
+
+    if not db_user.profile_photo_url:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="This user does not have an profile photo",
+        )
+
+    return FileResponse(
+        db_user.profile_photo_url,
+        media_type="image/png",
+        filename=db_user.username,
+    )

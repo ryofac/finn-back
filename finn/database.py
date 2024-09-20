@@ -14,4 +14,8 @@ async_session = sessionmaker(
 
 async def get_session():
     async with async_session() as session:
-        yield session
+        try:
+            yield session
+        except Exception as e:
+            await session.rollback()
+            raise e
