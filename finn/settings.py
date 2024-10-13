@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     POSTGRES_HOST: str
     POSTGRES_PORT: int
+    PORT: int = 8000
 
     @property
     def database_url(self):

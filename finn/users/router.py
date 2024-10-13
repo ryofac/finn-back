@@ -5,6 +5,7 @@ from fastapi.responses import Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from finn.auth.router import get_current_user
 from finn.database import get_session
 from finn.users.filters import UserFilterSchema, filter_user
 from finn.users.models import User
@@ -75,6 +76,14 @@ async def get_users(
     all_users = UserList.model_validate({"users": result.all()})
 
     return all_users
+
+
+@user_router.get(
+    "/me",
+    response_model=UserPublic,
+)
+async def me(current_user: User = Depends(get_current_user)):
+    return current_user
 
 
 @user_router.get(
