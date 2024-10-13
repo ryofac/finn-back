@@ -5,6 +5,8 @@ from fastapi.responses import Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from finn.auth.auth_bearer import JWTBearer
+from finn.auth.router import get_current_user
 from finn.categories.models import Category
 from finn.database import get_session
 from finn.debit.filters import filter_debit
@@ -12,7 +14,13 @@ from finn.debit.models import Debit
 from finn.debit.schemas import DebitCreateOrUpdateSchema, DebitFilterSchema, DebitList, DebitSchema
 from finn.users.models import User
 
-debit_router = APIRouter(prefix="/debits", tags=["debits"])
+debit_router = APIRouter(
+    prefix="/debits",
+    tags=["debits"],
+    dependencies=[
+        Depends(JWTBearer()),
+    ],
+)
 
 
 @debit_router.post(
@@ -20,19 +28,18 @@ debit_router = APIRouter(prefix="/debits", tags=["debits"])
     status_code=status.HTTP_201_CREATED,
     response_model=DebitCreateOrUpdateSchema,
 )
-async def create_debit(debit: DebitCreateOrUpdateSchema, session: AsyncSession = Depends(get_session)):
-    db_debit: Debit = Debit(**debit.model_dump())
+async def create_debit(debit: DebitCreateOrUpdateSchema, session: AsyncSession = Depends(get_session), current_user=Depends(get_current_user)):
+    db_debit: Debit = Debit(**debit.model_dump(), owner_id=current_user.id)
 
-    if not debit.owner_id or not debit.category_id:
+    if not debit.category_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Debit must have user and category",
+            detail="Debit must have category",
         )
 
-    owner: User = await session.scalar(select(User).where(User.id == db_debit.owner_id))
     category: Category = await session.scalar(select(Category).where(Category.id == db_debit.category_id))
 
-    if not owner:
+    if not current_user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found!",
@@ -57,18 +64,18 @@ async def create_debit(debit: DebitCreateOrUpdateSchema, session: AsyncSession =
 async def get_debits(
     dt_payment_from: datetime | None = Query(None, description="Data de pagamento de"),
     dt_payment_to: datetime | None = Query(None, description="Data de pagamento limite"),
-    owner_id: int | None = Query(None, description="Id do Usuário da task"),
     category_id: int | None = Query(None, description="Id da categoria"),
     category_name: str | None = Query(None, description="Nome da categoria"),
     limit: int = 100,
     offset: int = 0,
     session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user),
 ):
     query = filter_debit(
         DebitFilterSchema(
             dt_payment_from=dt_payment_from,
             dt_payment_to=dt_payment_to,
-            owner_id=owner_id,
+            owner_id=current_user.id,
             category_id=category_id,
             category_name=category_name,
         )

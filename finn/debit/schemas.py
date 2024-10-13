@@ -9,7 +9,6 @@ from finn.core.schemas import OrmModel
 class DebitSchema(OrmModel):
     id: int
     value: float
-    owner_id: int
     category: CategorySchema | None
     dt_payment: datetime
 
@@ -17,7 +16,6 @@ class DebitSchema(OrmModel):
 class DebitCreateOrUpdateSchema(OrmModel):
     value: float
     category_id: int
-    owner_id: int
 
 
 class DebitList(OrmModel):

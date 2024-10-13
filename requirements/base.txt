@@ -13,3 +13,6 @@ alembic==1.13.2
 
 # Segurança
 pwdlib[argon2]==0.2.1
+
+# Tokens JWT
+PyJWT==2.9.0

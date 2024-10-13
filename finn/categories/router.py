@@ -3,11 +3,18 @@ from fastapi.responses import Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from finn.auth.auth_bearer import JWTBearer
 from finn.categories.models import Category
 from finn.categories.schemas import CategoryCreateOrUpdateSchema, CategoryList, CategorySchema
 from finn.database import get_session
 
-category_router = APIRouter(prefix="/categories", tags=["categories"])
+category_router = APIRouter(
+    prefix="/categories",
+    tags=["categories"],
+    dependencies=[
+        Depends(JWTBearer()),
+    ],
+)
 
 
 @category_router.post(
